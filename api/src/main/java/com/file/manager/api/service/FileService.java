@@ -11,6 +11,9 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
@@ -28,7 +31,6 @@ public class FileService {
 	private String userDir;
 	private String contentDir;
 
-
 	@PostConstruct
 	public void init() {
 		try {
@@ -40,24 +42,23 @@ public class FileService {
 
 	public void save(MultipartFile [] file) {
 		try {
-			
+
 			ClassPathResource resource = new ClassPathResource(getTargetDir());
 			Path root = Paths.get(resource.getFile().getAbsolutePath());
-			
+
 			if (!Files.exists(root)) {
 				init();
 			}
 			for(int i = 0; i < file.length; i ++) {
-				
+
 				Files.copy(file[i].getInputStream(), root.resolve(file[i].getOriginalFilename()),StandardCopyOption.REPLACE_EXISTING);
 			}
-	
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
 		}
 	}
-
 
 	public ResponseEntity<InputStreamResource>  getFile(String fileName)
 	{
@@ -76,16 +77,16 @@ public class FileService {
 
 	}
 	public void deleteAll(String fileName) {
-		
+
 		try {
-			
+
 			ClassPathResource resource = new ClassPathResource(getTargetDir()+"/"+fileName);
 			FileSystemUtils.deleteRecursively(Paths.get(resource.getFile().getAbsolutePath()).toFile());
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	public List<Path> loadAll() {
@@ -132,6 +133,31 @@ public class FileService {
 		target.append("/");
 		target.append(contentDir);
 		return target.toString();
+	}
+	
+	public JSONObject stringToJson(String object) {
+		
+
+		JSONObject jObject = new JSONObject();
+		try {
+			
+			JSONParser parser = new JSONParser();
+			jObject = (JSONObject)parser.parse(object);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("json: "+ jObject.toString());
+		
+		//JSONObject name = jObject.getJSONObject("name"); 
+		//String url = jObject.getString("uri"); 
+		
+		//System.out.println("name: "+ name);
+		//System.out.println("url: "+ url);
+		
+		
+		return jObject;
 	}
 
 

@@ -4,10 +4,16 @@ public class Product {
 	
 	private long id;
 	private String name;
-	private String uri;
+	private String resourceUrl;
 	
 	
 	
+	public String getResourceUrl() {
+		return resourceUrl;
+	}
+	public void setResourceUrl(String resourceUrl) {
+		this.resourceUrl = resourceUrl;
+	}
 	public Product() {
 		
 	}
@@ -23,12 +29,6 @@ public class Product {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getUri() {
-		return uri;
-	}
-	public void setUri(String uri) {
-		this.uri = uri;
-	}
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -36,12 +36,13 @@ public class Product {
 		builder.append(id);
 		builder.append(", name=");
 		builder.append(name);
-		builder.append(", uri=");
-		builder.append(uri);
+		builder.append(", resourceUrl=");
+		builder.append(resourceUrl);
 		builder.append("]");
 		return builder.toString();
 	}
 	
+
 	
 	
 	
