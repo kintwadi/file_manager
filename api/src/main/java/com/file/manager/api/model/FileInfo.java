@@ -1,17 +1,17 @@
-package com.rest.api.model;
+package com.file.manager.api.model;
 
-public class FileData {
+public class FileInfo {
 
 	private String filename;
 	private String url;
 	private Long size;
 
 
-	public FileData() {
+	public FileInfo() {
 
 	}
 
-	public FileData(String filename, String url) {
+	public FileInfo(String filename, String url) {
 		this.filename = filename;
 		this.url = url;
 	}

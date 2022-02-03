@@ -1,4 +1,4 @@
-package com.rest.api.model;
+package com.file.manager.api.model;
 
 public class Product {
 	
