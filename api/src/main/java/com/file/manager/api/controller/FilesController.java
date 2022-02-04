@@ -33,12 +33,12 @@ public class FilesController {
 	public FilesController(FileService fileService) {
 		this.fileService = fileService;
 	}
-
-	@RequestMapping(value = "file/{user_dir}/{content_dir}/{fileName}")
+	
+	@RequestMapping(value = "file/{user_dir}/{content_dir}/{file_name}")
 	public ResponseEntity<InputStreamResource> getFile(
 			@PathVariable("user_dir") String userDir,
 			@PathVariable("content_dir") String contentDir,
-			@PathVariable("fileName") String fileName) throws IOException {
+			@PathVariable("file_name") String fileName) throws IOException {
 
 		fileService.setUserDir(userDir);
 		fileService.setContentDir(contentDir);
@@ -71,7 +71,8 @@ public class FilesController {
 		String filename = path.getFileName()
 				.toString();
 		fileInfo.setFilename(filename);
-		fileInfo.setUrl(MvcUriComponentsBuilder.fromMethodName(FilesController.class, "getFile", userDir,contentDir,filename)
+		fileInfo.setUrl(MvcUriComponentsBuilder
+				.fromMethodName(FilesController.class, "getFile", userDir,contentDir,filename)
 				.build()
 				.toString());
 		try {
@@ -104,11 +105,11 @@ public class FilesController {
 					.body(new UploadResponseMessage("Could not upload the file: "));
 		}
 	}
-	@DeleteMapping("delete/{user_dir}/{content_dir}/{fileName}")
+	@DeleteMapping("delete/{user_dir}/{content_dir}/{file_name}")
 	public void delete(
 			@PathVariable("user_dir") String userDir,
 			@PathVariable("content_dir") String contentDir,
-			@PathVariable("fileName") String fileName) {
+			@PathVariable("file_name") String fileName) {
 
 		fileService.setUserDir(userDir);
 		fileService.setContentDir(contentDir);
