@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
@@ -33,7 +35,7 @@ public class FilesController {
 	public FilesController(FileService fileService) {
 		this.fileService = fileService;
 	}
-	
+
 	@RequestMapping(value = "file/{user_dir}/{content_dir}/{file_name}")
 	public ResponseEntity<InputStreamResource> getFile(
 			@PathVariable("user_dir") String userDir,
@@ -89,15 +91,14 @@ public class FilesController {
 			@PathVariable("user_dir") String userDir,
 			@PathVariable("content_dir") String contentDir,
 			@RequestParam("file") MultipartFile [] file, 
-			@RequestParam("jsonData") String jsonData) {
+			HttpServletRequest request) {
 
 		fileService.setUserDir(userDir);
 		fileService.setContentDir(contentDir);
-		
-		fileService.stringToJson(jsonData);
 
 		try {
-			fileService.save(file);
+
+			fileService.store(request,file);
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new UploadResponseMessage("Uploaded the file successfully: "));
 		} catch (Exception e) {

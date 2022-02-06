@@ -1,15 +1,27 @@
 package com.file.manager.api.model;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+@Entity
 public class Lesson {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	private String content;
+	private String lesson;
 	private String url;
-	private Topic topic;
-	
+
+	@ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @JoinColumn(name = "topic_id", referencedColumnName = "id")
+    private Topic topic;
 	
 	public Lesson() {
-		super();
+		
 	}
 	public long getId() {
 		return id;
@@ -17,11 +29,11 @@ public class Lesson {
 	public void setId(long id) {
 		this.id = id;
 	}
-	public String getContent() {
-		return content;
+	public String getLesson() {
+		return lesson;
 	}
-	public void setContent(String content) {
-		this.content = content;
+	public void setLesson(String lesson) {
+		this.lesson = lesson;
 	}
 	public String getUrl() {
 		return url;
@@ -37,20 +49,13 @@ public class Lesson {
 	}
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Lesson [id=");
-		builder.append(id);
-		builder.append(", content=");
-		builder.append(content);
-		builder.append(", url=");
-		builder.append(url);
-		builder.append(", topic=");
-		builder.append(topic);
-		builder.append("]");
-		return builder.toString();
+		return "Lesson [id=" + id + ", lesson=" + lesson + ", url=" + url + ", topic=" + topic + "]";
 	}
 	
 	
+	
+	
+
 	
 	
 	

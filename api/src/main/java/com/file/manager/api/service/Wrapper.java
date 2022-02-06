@@ -1,50 +1,89 @@
 package com.file.manager.api.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import com.file.manager.api.model.Course;
 import com.file.manager.api.model.Lesson;
 import com.file.manager.api.model.Topic;
-import com.google.gson.Gson;
 
 public class Wrapper {
 
-	
-	public Course builder(String content) {
+	public Course courseBuilder(HttpServletRequest request) {
+
 		Course course = new Course();
-		
-		return course;
-	}
-	
-	
-	public  Object fronJson(int type, String content) {
-		
-		
 		try {
-			Gson gson = new Gson(); // Or use new GsonBuilder().create();
-			
-			switch (type) {
-			case 1:
-			
-				Course course = gson.fromJson(content, Course.class);
-				return course;
-				
-			case 2:
-				Topic topic = gson.fromJson(content, Topic.class); 
-				return topic;
-			
 
-			case 3:
-				Lesson lesson = gson.fromJson(content, Lesson.class); 
-				return lesson;
+			String content = request.getParameter("course");
+			JSONParser parser = new JSONParser();
+			JSONObject object = new JSONObject();
+			object = (JSONObject) parser.parse(content);
+			course.setTitle(toString(object.get("title")));
+			course.setHighlight(toString(object.get("highlight")));
+			course.setRequirement(toString(object.get("requirement")));
+			course.setLerningObjective(toString(object.get("lerningObjective")));
+			course.setAudience(toString(object.get("audience")));
+			course.setPosition(toString(object.get("position")));
+			course.setRating(toString(object.get("rating")));
 
-			default:
-				break;
-			}
-			
-			
-		} catch (Exception e) {
+		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		
-		return null;
+		return course;
 	}
+
+	public Topic topicBuilder(HttpServletRequest request) {
+
+		Topic topic = new Topic();
+		try {
+
+			String content = request.getParameter("topic");
+			JSONParser parser = new JSONParser();
+			JSONObject object = new JSONObject();
+			object = (JSONObject) parser.parse(content);
+			topic.setTitle(toString(object.get("title")));
+			return topic;
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return topic;
+	}
+
+	public List<Lesson> lessonBuilder(HttpServletRequest request) {
+
+		List<Lesson> lessons = new ArrayList<Lesson>();
+
+		try {
+			
+			String content = request.getParameter("lessons");
+			JSONParser parser = new JSONParser();
+			JSONObject obj = (JSONObject)parser.parse(content);
+			JSONArray array = (JSONArray)obj.get("entries");
+			
+			for(int i = 0; i < array.size(); i++) {
+				
+				JSONObject object = (JSONObject)array.get(i);
+				Lesson lesson = new Lesson();
+				lesson.setLesson(toString(object.get("lesson")));
+				lessons.add(lesson);
+			}
+			
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		return lessons;
+	}
+
+	private String toString(Object value) {
+		return String.valueOf(value);
+	}
+
 }

@@ -5,15 +5,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 
-
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
@@ -23,6 +26,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.file.manager.api.model.Course;
+import com.file.manager.api.model.Lesson;
+import com.file.manager.api.model.Topic;
+import com.file.manager.api.repository.CourseRepository;
+import com.file.manager.api.repository.LessonRepository;
+import com.file.manager.api.repository.TopicRepository;
+
 @Service
 public class FileService {
 
@@ -30,6 +40,13 @@ public class FileService {
 	private String baseDir;
 	private String userDir;
 	private String contentDir;
+
+	@Autowired
+	private CourseRepository courseRepository;
+	@Autowired
+	private TopicRepository topicRepository;
+	@Autowired
+	private LessonRepository lessonRepository;
 
 	@PostConstruct
 	public void init() {
@@ -40,34 +57,65 @@ public class FileService {
 		}
 	}
 
-	public void save(MultipartFile [] file) {
-		try {
+	public void addCourse(Course course) {
 
+		courseRepository.save(course);
+	}
+
+	public void store(HttpServletRequest request, MultipartFile[] file) {
+
+		Wrapper wrapper = new Wrapper();
+		Course course = wrapper.courseBuilder(request);
+		Topic topic = wrapper.topicBuilder(request);
+		List<Lesson> lessonList = wrapper.lessonBuilder(request);
+		
+		Set<Lesson> lessons = new HashSet<Lesson>();
+		List<String> filenames = fileStore(file);
+	
+		for (int i = 0; i < filenames.size(); i++) {
+
+			Lesson lson = new Lesson();
+			lson.setUrl(filenames.get(i));
+			lson.setLesson(lessonList.get(i).getLesson());
+			lson.setTopic(topic);
+			lessons.add(lson);
+		}
+		topic.setLessons(lessons);
+		course.setTopic(topic);
+		topic.setCourse(course);
+		//courseRepository.save(course);
+		topicRepository.save(topic);
+	}
+
+	public List<String> fileStore(MultipartFile[] file) {
+
+		List<String> filenames = new ArrayList<>();
+
+		try {
 			ClassPathResource resource = new ClassPathResource(getTargetDir());
 			Path root = Paths.get(resource.getFile().getAbsolutePath());
-
 			if (!Files.exists(root)) {
 				init();
 			}
-			for(int i = 0; i < file.length; i ++) {
+			for (int i = 0; i < file.length; i++) {
 
-				Files.copy(file[i].getInputStream(), root.resolve(file[i].getOriginalFilename()),StandardCopyOption.REPLACE_EXISTING);
+				String filename = file[i].getOriginalFilename();
+				Files.copy(file[i].getInputStream(), root.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
+				filenames.add(filename);
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
 		}
+		return filenames;
+
 	}
 
-	public ResponseEntity<InputStreamResource>  getFile(String fileName)
-	{
-		ClassPathResource imgFile = new ClassPathResource(getTargetDir()+"/"+fileName);
+	public ResponseEntity<InputStreamResource> getFile(String fileName) {
+		ClassPathResource imgFile = new ClassPathResource(getTargetDir() + "/" + fileName);
 
 		try {
-			return ResponseEntity
-					.ok()
-					.contentType(MediaType.IMAGE_JPEG)
+			return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG)
 					.body(new InputStreamResource(imgFile.getInputStream()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -76,11 +124,12 @@ public class FileService {
 		return null;
 
 	}
+
 	public void deleteAll(String fileName) {
 
 		try {
 
-			ClassPathResource resource = new ClassPathResource(getTargetDir()+"/"+fileName);
+			ClassPathResource resource = new ClassPathResource(getTargetDir() + "/" + fileName);
 			FileSystemUtils.deleteRecursively(Paths.get(resource.getFile().getAbsolutePath()).toFile());
 
 		} catch (IOException e) {
@@ -97,9 +146,7 @@ public class FileService {
 
 			if (Files.exists(root)) {
 
-				return Files.walk(root, 1)
-						.filter(path -> !path.equals(root))
-						.collect(Collectors.toList());
+				return Files.walk(root, 1).filter(path -> !path.equals(root)).collect(Collectors.toList());
 			}
 
 			return Collections.emptyList();
@@ -134,34 +181,5 @@ public class FileService {
 		target.append(contentDir);
 		return target.toString();
 	}
-	
-	public JSONObject stringToJson(String object) {
-		
-
-		JSONObject jObject = new JSONObject();
-		try {
-			
-			JSONParser parser = new JSONParser();
-			jObject = (JSONObject)parser.parse(object);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		System.out.println("json: "+ jObject.toString());
-		
-		//JSONObject name = jObject.getJSONObject("name"); 
-		//String url = jObject.getString("uri"); 
-		
-		//System.out.println("name: "+ name);
-		//System.out.println("url: "+ url);
-		
-		
-		return jObject;
-	}
-
-
-
-
 
 }
