@@ -9,44 +9,49 @@
 	"lerningObjective":"Understand the theoretical underpinnings of Java Enterprise Edition (JEE),Learn to create applications using JEE!"
 }
 
-
 {
 	"id":"1",
 	"title":"Introduction",
 	"course":""
 	
-}
+},
 
 {
-	"entries":[
-		{
-			"id":"1",
-			"title":"Introduction to the course1",
-			"lesson":"Setup and basic concepts1",
-			"url":"empty",
-			"topic":""	
-		} ,
-		{
-			"id":"2",
-			"title":"Introduction to the course2",
-			"lesson":"Setup and basic concepts2",
-			"url":"empty",
-			"topic":""	
-		} ,
-		{
-			"id":"3",
-			"title":"Introduction to the course3",
-			"lesson":"Setup and basic concepts3",
-			"url":"empty",
-			"topic":""	
-		} ,
-		{
-			"id":"4",
-			"title":"Introduction to the course4",
-			"lesson":"Setup and basic concepts4",
-			"url":"empty",
-			"topic":""	
-		} 
-		
-	]
+	"topic":{
+		"id":"1",
+		"title":"Introduction",
+		"course":"",
+		"lessons":[
+			{
+				"id":"1",
+				"title":"Introduction to the course1",
+				"lesson":"Setup and basic concepts1",
+				"url":"1",
+				"topic":""	
+			} ,
+			{
+				"id":"2",
+				"title":"Introduction to the course2",
+				"lesson":"Setup and basic concepts2",
+				"url":"2",
+				"topic":""	
+			} ,
+			{
+				"id":"3",
+				"title":"Introduction to the course3",
+				"lesson":"Setup and basic concepts3",
+				"url":"3",
+				"topic":""	
+			} ,
+			{
+				"id":"4",
+				"title":"Introduction to the course4",
+				"lesson":"Setup and basic concepts4",
+				"url":"4",
+				"topic":""	
+			} 
+			
+		]
+	},
+	
 }
