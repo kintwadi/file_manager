@@ -1,7 +1,7 @@
 package com.file.manager.api.service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,6 +9,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
 import com.file.manager.api.model.Course;
 import com.file.manager.api.model.Lesson;
 import com.file.manager.api.model.Topic;
@@ -38,48 +39,36 @@ public class Wrapper {
 		return course;
 	}
 
-	public Topic topicBuilder(HttpServletRequest request) {
 
+	public Topic  topicAndLessonBuilder(HttpServletRequest request) {
+
+		Set<Lesson> lessons = new HashSet<Lesson>();
 		Topic topic = new Topic();
+	
 		try {
-
+			
 			String content = request.getParameter("topic");
 			JSONParser parser = new JSONParser();
-			JSONObject object = new JSONObject();
-			object = (JSONObject) parser.parse(content);
-			topic.setTitle(toString(object.get("title")));
-			return topic;
-
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return topic;
-	}
-
-	public List<Lesson> lessonBuilder(HttpServletRequest request) {
-
-		List<Lesson> lessons = new ArrayList<Lesson>();
-
-		try {
-			
-			String content = request.getParameter("lessons");
-			JSONParser parser = new JSONParser();
 			JSONObject obj = (JSONObject)parser.parse(content);
-			JSONArray array = (JSONArray)obj.get("entries");
-			
-			for(int i = 0; i < array.size(); i++) {
-				
-				JSONObject object = (JSONObject)array.get(i);
+			JSONObject jsonTopic = (JSONObject)obj.get("topic");
+			topic.setTitle(toString(jsonTopic.get("title")));
+			JSONArray jsonLessons = (JSONArray)jsonTopic.get("lessons");
+
+			for(int i = 0; i < jsonLessons.size(); i++) {
+
+				JSONObject object = (JSONObject)jsonLessons.get(i);
 				Lesson lesson = new Lesson();
 				lesson.setLesson(toString(object.get("lesson")));
 				lessons.add(lesson);
 			}
 			
+			topic.setLessons(lessons);
+
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-
-		return lessons;
+		
+		return topic;
 	}
 
 	private String toString(Object value) {

@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -28,9 +27,7 @@ import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.file.manager.api.model.Course;
-import com.file.manager.api.model.FileInfo;
 import com.file.manager.api.model.Lesson;
-import com.file.manager.api.model.Response;
 import com.file.manager.api.model.Topic;
 import com.file.manager.api.repository.CourseRepository;
 import com.file.manager.api.repository.LessonRepository;
@@ -50,6 +47,7 @@ public class FileService {
 	private TopicRepository topicRepository;
 	@Autowired
 	private LessonRepository lessonRepository;
+	
 
 	@PostConstruct
 	public void init() {
@@ -69,24 +67,26 @@ public class FileService {
 
 		Wrapper wrapper = new Wrapper();
 		Course course = wrapper.courseBuilder(request);
-		Topic topic = wrapper.topicBuilder(request);
-		List<Lesson> lessonList = wrapper.lessonBuilder(request);
-
+		Topic topic = wrapper.topicAndLessonBuilder(request);
 		Set<Lesson> lessons = new HashSet<Lesson>();
-		List<String> filenames = fileStore(file);
 
-		for (int i = 0; i < filenames.size(); i++) {
+		List<String> filenames = fileStore(file);
+		Iterator<Lesson> iterator = topic.getLessons().iterator();
+		
+		int i = 0;
+		while(iterator.hasNext()) {
 
 			Lesson lson = new Lesson();
 			lson.setUrl(filenames.get(i));
-			lson.setLesson(lessonList.get(i).getLesson());
+			lson.setLesson(iterator.next().getLesson());
 			lson.setTopic(topic);
 			lessons.add(lson);
+			i++;
+
 		}
 		topic.setLessons(lessons);
 		course.setTopic(topic);
 		topic.setCourse(course);
-		// courseRepository.save(course);
 		topicRepository.save(topic);
 	}
 
@@ -184,7 +184,7 @@ public class FileService {
 		target.append(contentDir);
 		return target.toString();
 	}
-
+	
 	public List<Course> allCourses(List<FileInfo> fileInfos) {
 
 		List<Course> courses = courseRepository.findAll();
