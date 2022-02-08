@@ -105,7 +105,11 @@ public class FilesController {
 			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
 					.body(new UploadResponseMessage("Could not upload the file: "));
 		}
+		
+		
 	}
+	
+	
 	@DeleteMapping("delete/{user_dir}/{content_dir}/{file_name}")
 	public void delete(
 			@PathVariable("user_dir") String userDir,

@@ -8,6 +8,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -27,7 +28,9 @@ import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.file.manager.api.model.Course;
+import com.file.manager.api.model.FileInfo;
 import com.file.manager.api.model.Lesson;
+import com.file.manager.api.model.Response;
 import com.file.manager.api.model.Topic;
 import com.file.manager.api.repository.CourseRepository;
 import com.file.manager.api.repository.LessonRepository;
@@ -68,10 +71,10 @@ public class FileService {
 		Course course = wrapper.courseBuilder(request);
 		Topic topic = wrapper.topicBuilder(request);
 		List<Lesson> lessonList = wrapper.lessonBuilder(request);
-		
+
 		Set<Lesson> lessons = new HashSet<Lesson>();
 		List<String> filenames = fileStore(file);
-	
+
 		for (int i = 0; i < filenames.size(); i++) {
 
 			Lesson lson = new Lesson();
@@ -83,7 +86,7 @@ public class FileService {
 		topic.setLessons(lessons);
 		course.setTopic(topic);
 		topic.setCourse(course);
-		//courseRepository.save(course);
+		// courseRepository.save(course);
 		topicRepository.save(topic);
 	}
 
@@ -180,6 +183,29 @@ public class FileService {
 		target.append("/");
 		target.append(contentDir);
 		return target.toString();
+	}
+
+	public List<Course> allCourses(List<FileInfo> fileInfos) {
+
+		List<Course> courses = courseRepository.findAll();
+		List<Response>response = new ArrayList<Response>();
+		for(Course course: courses) {
+			
+		    Iterator<Lesson> it = course.getTopic().getLessons().iterator();
+		    for(int i = 0; it.hasNext(); i++) {
+		    	
+		    	Lesson lesson = it.next();
+		    	if(lesson.getUrl().equals(fileInfos.get(i).getFilename())) {
+		    		
+		    	}
+		    }
+		  
+			
+			
+		}
+		
+		
+		return courses;
 	}
 
 }
