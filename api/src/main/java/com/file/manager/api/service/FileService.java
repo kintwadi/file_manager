@@ -27,7 +27,9 @@ import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.file.manager.api.model.Course;
+import com.file.manager.api.model.FileInfo;
 import com.file.manager.api.model.Lesson;
+import com.file.manager.api.model.Response;
 import com.file.manager.api.model.Topic;
 import com.file.manager.api.repository.CourseRepository;
 import com.file.manager.api.repository.LessonRepository;
@@ -77,7 +79,7 @@ public class FileService {
 		while(iterator.hasNext()) {
 
 			Lesson lson = new Lesson();
-			lson.setUrl(filenames.get(i));
+			lson.setResource(filenames.get(i));
 			lson.setLesson(iterator.next().getLesson());
 			lson.setTopic(topic);
 			lessons.add(lson);
@@ -185,27 +187,34 @@ public class FileService {
 		return target.toString();
 	}
 	
-	public List<Course> allCourses(List<FileInfo> fileInfos) {
+	public List<Topic> allTopics(List<FileInfo> fileInfos) {
 
-		List<Course> courses = courseRepository.findAll();
-		List<Response>response = new ArrayList<Response>();
-		for(Course course: courses) {
-			
-		    Iterator<Lesson> it = course.getTopic().getLessons().iterator();
+		List<Topic> topics = topicRepository.findAll();
+		List<Response>responseList = new ArrayList<Response>();
+		
+		
+		for(Topic topic: topics) {
+			System.out.println("topic title: "+topic.getTitle());
+		    Iterator<Lesson> it = topic.getLessons().iterator();
 		    for(int i = 0; it.hasNext(); i++) {
 		    	
 		    	Lesson lesson = it.next();
-		    	if(lesson.getUrl().equals(fileInfos.get(i).getFilename())) {
+		    	System.out.println("lesson: "+lesson.getLesson());
+		    	if(i < fileInfos.size()) {
 		    		
+		    		if(lesson.getResource().equals(fileInfos.get(i).getFilename())) {
+			    		
+			    		lesson.setResource(fileInfos.get(i).getFilename());
+			    	}
 		    	}
+		    	
+		    	
 		    }
-		  
-			
-			
+		  	
 		}
 		
-		
-		return courses;
+		System.out.println("topics: "+topics);
+		return topics;
 	}
 
 }

@@ -14,6 +14,7 @@ import javax.persistence.OneToOne;
 public class Course implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
@@ -89,31 +90,5 @@ public class Course implements Serializable{
 	public void setTopic(Topic topic) {
 		this.topic = topic;
 	}
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Course [id=");
-		builder.append(id);
-		builder.append(", title=");
-		builder.append(title);
-		builder.append(", highlight=");
-		builder.append(highlight);
-		builder.append(", position=");
-		builder.append(position);
-		builder.append(", rating=");
-		builder.append(rating);
-		builder.append(", audience=");
-		builder.append(audience);
-		builder.append(", requirement=");
-		builder.append(requirement);
-		builder.append(", lerningObjective=");
-		builder.append(lerningObjective);
-		builder.append(", topic=");
-		builder.append(topic);
-		builder.append("]");
-		return builder.toString();
-	}
 	
-
-
 }

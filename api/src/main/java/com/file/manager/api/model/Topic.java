@@ -1,5 +1,6 @@
 package com.file.manager.api.model;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -12,7 +13,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 @Entity
-public class Topic {
+public class Topic implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
@@ -60,20 +66,8 @@ public class Topic {
 	public void setCourse(Course course) {
 		this.course = course;
 	}
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Topic [id=");
-		builder.append(id);
-		builder.append(", title=");
-		builder.append(title);
-		builder.append(", course=");
-		builder.append(course);
-		builder.append(", lessons=");
-		builder.append(lessons);
-		builder.append("]");
-		return builder.toString();
-	}
+
+
 	
 
 

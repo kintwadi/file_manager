@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
+import com.file.manager.api.model.Course;
 import com.file.manager.api.model.FileInfo;
+import com.file.manager.api.model.Topic;
 import com.file.manager.api.model.UploadResponseMessage;
 import com.file.manager.api.service.FileService;
 
@@ -59,6 +61,11 @@ public class FilesController {
 				.stream()
 				.map(this::pathToFileInfo)
 				.collect(Collectors.toList());
+		
+		List<Topic> allTopics = fileService.allTopics(fileInfos);
+		//System.out.println("Topic: "+allTopics);
+		
+		
 
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(fileInfos);
@@ -108,8 +115,6 @@ public class FilesController {
 		
 		
 	}
-	
-	
 	@DeleteMapping("delete/{user_dir}/{content_dir}/{file_name}")
 	public void delete(
 			@PathVariable("user_dir") String userDir,

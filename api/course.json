@@ -14,7 +14,7 @@
 	"title":"Introduction",
 	"course":""
 	
-},
+}
 
 {
 	"topic":{
@@ -26,28 +26,28 @@
 				"id":"1",
 				"title":"Introduction to the course1",
 				"lesson":"Setup and basic concepts1",
-				"url":"1",
+				"recource":"1",
 				"topic":""	
 			} ,
 			{
 				"id":"2",
 				"title":"Introduction to the course2",
 				"lesson":"Setup and basic concepts2",
-				"url":"2",
+				"recource":"2",
 				"topic":""	
 			} ,
 			{
 				"id":"3",
 				"title":"Introduction to the course3",
 				"lesson":"Setup and basic concepts3",
-				"url":"3",
+				"recource":"3",
 				"topic":""	
 			} ,
 			{
 				"id":"4",
 				"title":"Introduction to the course4",
 				"lesson":"Setup and basic concepts4",
-				"url":"4",
+				"recource":"4",
 				"topic":""	
 			} 
 			

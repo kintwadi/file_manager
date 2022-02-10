@@ -1,5 +1,7 @@
 package com.file.manager.api.model;
 
+import java.io.Serializable;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,20 +10,22 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 @Entity
-public class Lesson {
+public class Lesson implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	private String lesson;
-	private String url;
+	private String resource;
 
 	@ManyToOne(optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "topic_id", referencedColumnName = "id")
-    private Topic topic;
-	
+	@JoinColumn(name = "topic_id", referencedColumnName = "id")
+	private Topic topic;
+
 	public Lesson() {
-		
+
 	}
 	public long getId() {
 		return id;
@@ -35,11 +39,11 @@ public class Lesson {
 	public void setLesson(String lesson) {
 		this.lesson = lesson;
 	}
-	public String getUrl() {
-		return url;
+	public String getResource() {
+		return resource;
 	}
-	public void setUrl(String url) {
-		this.url = url;
+	public void setResource(String url) {
+		this.resource = url;
 	}
 	public Topic getTopic() {
 		return topic;
@@ -47,17 +51,6 @@ public class Lesson {
 	public void setTopic(Topic topic) {
 		this.topic = topic;
 	}
-	@Override
-	public String toString() {
-		return "Lesson [id=" + id + ", lesson=" + lesson + ", url=" + url + ", topic=" + topic + "]";
-	}
-	
-	
-	
-	
-
-	
-	
 	
 	
 }

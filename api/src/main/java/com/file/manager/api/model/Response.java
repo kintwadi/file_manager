@@ -1,7 +1,11 @@
 package com.file.manager.api.model;
 
-public class Response {
+import java.io.Serializable;
 
+public class Response  implements Serializable{
+
+	
+	private static final long serialVersionUID = 1L;
 	private Course course;
 	
 	
@@ -19,17 +23,5 @@ public class Response {
 		this.course = course;
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Response [course=");
-		builder.append(course);
-		builder.append("]");
-		return builder.toString();
-	}
-	
-	
-	
-	
 	
 }
