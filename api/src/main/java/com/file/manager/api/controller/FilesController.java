@@ -69,16 +69,22 @@ public class FilesController {
 
 	private Resource pathToResource(Path path) {
 		
-		
 		Resource resource = new Resource();
 
 		String userDir = fileService.getUserDir();
 		String contentDir = fileService.getContentDir();
+		StringBuilder location = new StringBuilder(userDir);
+		
+		
 
-		String filename = path.getFileName()
-				.toString();
+		String filename = path.getFileName().toString();
+		location.append("/");
+		location.append(contentDir);
+		location.append("/");
+		location.append(filename);
+		
 		resource.setFileName(filename);
-		resource.setLessonId(fileService.findLessonByResource(filename));
+		resource.setLessonId(fileService.findLessonByResource(location.toString()));
 		resource.setUrl(MvcUriComponentsBuilder
 				.fromMethodName(FilesController.class, "getFile", userDir,contentDir,filename)
 				.build()

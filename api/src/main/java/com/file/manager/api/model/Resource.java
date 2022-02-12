@@ -7,7 +7,6 @@ public class Resource {
 	private String url;
 	private Long size;
 
-
 	public Resource() {
 
 	}

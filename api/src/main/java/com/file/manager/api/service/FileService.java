@@ -77,7 +77,13 @@ public class FileService {
 		while(iterator.hasNext()) {
 
 			Lesson lson = new Lesson();
-			lson.setResource(filenames.get(i));
+			StringBuilder location = new StringBuilder(getUserDir());
+			location.append("/");
+			location.append(getContentDir());
+			location.append("/");
+			location.append(filenames.get(i));
+			
+			lson.setResource(location.toString());
 			lson.setLesson(iterator.next().getLesson());
 			lson.setTopic(topic);
 			lessons.add(lson);
