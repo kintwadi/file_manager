@@ -60,34 +60,37 @@ public class FilesController {
 
 		List<Resource> fileInfos = fileService.loadAll()
 				.stream()
-				.map(this::pathToFileInfo)
+				.map(this::pathToResource)
 				.collect(Collectors.toList());
 
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(fileInfos);
 	}
 
-	private Resource pathToFileInfo(Path path) {
-		Resource fileInfo = new Resource();
+	private Resource pathToResource(Path path) {
+		
+		
+		Resource resource = new Resource();
 
 		String userDir = fileService.getUserDir();
 		String contentDir = fileService.getContentDir();
 
 		String filename = path.getFileName()
 				.toString();
-		fileInfo.setFilename(filename);
-		fileInfo.setUrl(MvcUriComponentsBuilder
+		resource.setFileName(filename);
+		resource.setLessonId(fileService.findLessonByResource(filename));
+		resource.setUrl(MvcUriComponentsBuilder
 				.fromMethodName(FilesController.class, "getFile", userDir,contentDir,filename)
 				.build()
 				.toString());
 		try {
-			fileInfo.setSize(Files.size(path));
+			resource.setSize(Files.size(path));
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Error: " + e.getMessage());
 		}
 
-		return fileInfo;
+		return resource;
 	}
 	@PostMapping("upload/{user_dir}/{content_dir}")
 	public ResponseEntity<UploadResponseMessage> uploadFile(

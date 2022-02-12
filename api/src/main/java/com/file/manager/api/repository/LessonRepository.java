@@ -8,4 +8,5 @@ import com.file.manager.api.model.Lesson;
 @Repository
 public interface LessonRepository extends JpaRepository<Lesson, Long> {
 
+	   public Lesson findByResource(String resource);
 }

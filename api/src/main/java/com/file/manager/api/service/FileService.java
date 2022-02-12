@@ -188,5 +188,9 @@ public class FileService {
 		target.append(contentDir);
 		return target.toString();
 	}
+	public long findLessonByResource(String resource) {
+		
+		return lessonRepository.findByResource(resource).getId();
+	}
 
 }

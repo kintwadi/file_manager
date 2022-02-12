@@ -3,6 +3,7 @@ package com.file.manager.api.model;
 import java.io.Serializable;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,6 +19,7 @@ public class Lesson implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	private String lesson;
+	@Column(name = "resource" ,unique=true,nullable = false)
 	private String resource;
 
 	@ManyToOne(optional = false, cascade = CascadeType.ALL)
