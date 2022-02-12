@@ -1,5 +1,7 @@
 package com.file.manager.api.service;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,12 +15,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +27,7 @@ import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.file.manager.api.model.Course;
-import com.file.manager.api.model.FileInfo;
 import com.file.manager.api.model.Lesson;
-import com.file.manager.api.model.Response;
 import com.file.manager.api.model.Topic;
 import com.file.manager.api.repository.CourseRepository;
 import com.file.manager.api.repository.LessonRepository;
@@ -51,7 +49,7 @@ public class FileService {
 	private LessonRepository lessonRepository;
 	
 
-	@PostConstruct
+	//@PostConstruct
 	public void init() {
 		try {
 			Files.createDirectories(Paths.get(getTargetDir()));
@@ -97,8 +95,7 @@ public class FileService {
 		List<String> filenames = new ArrayList<>();
 
 		try {
-			ClassPathResource resource = new ClassPathResource(getTargetDir());
-			Path root = Paths.get(resource.getFile().getAbsolutePath());
+			Path root = Paths.get(getTargetDir());
 			if (!Files.exists(root)) {
 				init();
 			}
@@ -109,22 +106,25 @@ public class FileService {
 				filenames.add(filename);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
+			System.out.println("Could not store the file. Error: " +e.getLocalizedMessage());
+		
 		}
 		return filenames;
 
 	}
 
 	public ResponseEntity<InputStreamResource> getFile(String fileName) {
-		ClassPathResource imgFile = new ClassPathResource(getTargetDir() + "/" + fileName);
-
+		
 		try {
-			return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG)
-					.body(new InputStreamResource(imgFile.getInputStream()));
+			
+			String filename = getTargetDir()+"/"+fileName;
+
+			File file = new File(filename);
+			InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+			return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(resource);
+			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(e.getLocalizedMessage());
 		}
 		return null;
 
@@ -134,10 +134,9 @@ public class FileService {
 
 		try {
 
-			ClassPathResource resource = new ClassPathResource(getTargetDir() + "/" + fileName);
-			FileSystemUtils.deleteRecursively(Paths.get(resource.getFile().getAbsolutePath()).toFile());
-
-		} catch (IOException e) {
+			FileSystemUtils.deleteRecursively(Paths.get(getTargetDir() + "/" + fileName).toFile());
+			
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -146,8 +145,7 @@ public class FileService {
 	public List<Path> loadAll() {
 		try {
 
-			ClassPathResource resource = new ClassPathResource(getTargetDir());
-			Path root = Paths.get(resource.getFile().getAbsolutePath());
+			Path root = Paths.get(getTargetDir());
 
 			if (Files.exists(root)) {
 
@@ -156,7 +154,7 @@ public class FileService {
 
 			return Collections.emptyList();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println(e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -179,42 +177,16 @@ public class FileService {
 
 	public String getTargetDir() {
 
-		StringBuilder target = new StringBuilder(baseDir);
+		
+		String localDir = System.getProperty("user.dir");
+		String directory = localDir+"/"+baseDir;
+		   
+		StringBuilder target = new StringBuilder(directory);
 		target.append("/");
 		target.append(userDir);
 		target.append("/");
 		target.append(contentDir);
 		return target.toString();
-	}
-	
-	public List<Topic> allTopics(List<FileInfo> fileInfos) {
-
-		List<Topic> topics = topicRepository.findAll();
-		List<Response>responseList = new ArrayList<Response>();
-		
-		
-		for(Topic topic: topics) {
-			System.out.println("topic title: "+topic.getTitle());
-		    Iterator<Lesson> it = topic.getLessons().iterator();
-		    for(int i = 0; it.hasNext(); i++) {
-		    	
-		    	Lesson lesson = it.next();
-		    	System.out.println("lesson: "+lesson.getLesson());
-		    	if(i < fileInfos.size()) {
-		    		
-		    		if(lesson.getResource().equals(fileInfos.get(i).getFilename())) {
-			    		
-			    		lesson.setResource(fileInfos.get(i).getFilename());
-			    	}
-		    	}
-		    	
-		    	
-		    }
-		  	
-		}
-		
-		System.out.println("topics: "+topics);
-		return topics;
 	}
 
 }

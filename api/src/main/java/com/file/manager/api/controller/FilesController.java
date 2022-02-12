@@ -16,15 +16,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
-import com.file.manager.api.model.Course;
-import com.file.manager.api.model.FileInfo;
-import com.file.manager.api.model.Topic;
+import com.file.manager.api.model.Resource;
 import com.file.manager.api.model.UploadResponseMessage;
 import com.file.manager.api.service.FileService;
 
@@ -37,42 +34,41 @@ public class FilesController {
 	public FilesController(FileService fileService) {
 		this.fileService = fileService;
 	}
-
-	@RequestMapping(value = "file/{user_dir}/{content_dir}/{file_name}")
+	@GetMapping("file/{user_dir}/{content_dir}/{file_name}")
 	public ResponseEntity<InputStreamResource> getFile(
 			@PathVariable("user_dir") String userDir,
 			@PathVariable("content_dir") String contentDir,
-			@PathVariable("file_name") String fileName) throws IOException {
+			@PathVariable("file_name") String fileName) throws IOException 
+	{
 
 		fileService.setUserDir(userDir);
 		fileService.setContentDir(contentDir);
-		return fileService.getFile(fileName);
+		
+		ResponseEntity<InputStreamResource> resource = fileService.getFile(fileName);
+
+		return resource;
+	
 	}
 
 	@GetMapping("files/{user_dir}/{content_dir}")
-	public ResponseEntity<List<FileInfo>> getFiles(
+	public ResponseEntity<List<Resource>> getFiles(
 			@PathVariable("user_dir") String userDir,
 			@PathVariable("content_dir") String contentDir) {
 
 		fileService.setUserDir(userDir);
 		fileService.setContentDir(contentDir);
 
-		List<FileInfo> fileInfos = fileService.loadAll()
+		List<Resource> fileInfos = fileService.loadAll()
 				.stream()
 				.map(this::pathToFileInfo)
 				.collect(Collectors.toList());
-		
-		List<Topic> allTopics = fileService.allTopics(fileInfos);
-		//System.out.println("Topic: "+allTopics);
-		
-		
 
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(fileInfos);
 	}
 
-	private FileInfo pathToFileInfo(Path path) {
-		FileInfo fileInfo = new FileInfo();
+	private Resource pathToFileInfo(Path path) {
+		Resource fileInfo = new Resource();
 
 		String userDir = fileService.getUserDir();
 		String contentDir = fileService.getContentDir();
@@ -112,8 +108,8 @@ public class FilesController {
 			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
 					.body(new UploadResponseMessage("Could not upload the file: "));
 		}
-		
-		
+
+
 	}
 	@DeleteMapping("delete/{user_dir}/{content_dir}/{file_name}")
 	public void delete(

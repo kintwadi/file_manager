@@ -1,17 +1,17 @@
 package com.file.manager.api.model;
 
-public class FileInfo {
+public class Resource {
 
 	private String filename;
 	private String url;
 	private Long size;
 
 
-	public FileInfo() {
+	public Resource() {
 
 	}
 
-	public FileInfo(String filename, String url) {
+	public Resource(String filename, String url) {
 		this.filename = filename;
 		this.url = url;
 	}
