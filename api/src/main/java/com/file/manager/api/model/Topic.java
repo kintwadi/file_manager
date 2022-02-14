@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -23,9 +24,12 @@ public class Topic implements Serializable {
 	private String title;
 
 	
-	@OneToOne(mappedBy = "topic",cascade = CascadeType.ALL)
-    private Course course;
-
+	
+	 @OneToOne(optional = false,cascade = CascadeType.ALL)
+	 @JoinColumn(name = "course_id", referencedColumnName = "id") 
+	 private Course course;
+	 
+	
 	@OneToMany(mappedBy = "topic", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<Lesson> lessons;
 
@@ -56,23 +60,21 @@ public class Topic implements Serializable {
 	public void setLessons(Set<Lesson> lessons) {
 		this.lessons = lessons;
 	}
-	
-	
 	public Course getCourse() {
 		return course;
 	}
 	public void setCourse(Course course) {
 		this.course = course;
 	}
-
-
-	
-
-
-
-
-
-
-
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Topic [id=");
+		builder.append(id);
+		builder.append(", title=");
+		builder.append(title);
+		builder.append(", lessons=");
+		return builder.toString();
+	}
 
 }

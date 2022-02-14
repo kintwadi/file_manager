@@ -53,6 +53,19 @@ public class Lesson implements Serializable {
 	public void setTopic(Topic topic) {
 		this.topic = topic;
 	}
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Lesson [id=");
+		builder.append(id);
+		builder.append(", resource=");
+		builder.append(resource);
+		builder.append(", topic=");
+		builder.append(topic);
+		builder.append("]");
+		return builder.toString();
+	}
+	
 	
 	
 }

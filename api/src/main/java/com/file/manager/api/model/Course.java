@@ -26,10 +26,9 @@ public class Course implements Serializable{
 	private String requirement;
 	private String lerningObjective; // objective1, objective2, etc
 	
-	@OneToOne(optional = false,cascade = CascadeType.ALL)
-    @JoinColumn(name = "topic_id", referencedColumnName = "id")
-    private Topic topic;
-
+	@OneToOne(mappedBy = "course",cascade = CascadeType.ALL)
+	private Topic  topic;
+	 
 	
 	
 	public Course() {
@@ -90,5 +89,8 @@ public class Course implements Serializable{
 	public void setTopic(Topic topic) {
 		this.topic = topic;
 	}
+	
+	
+	
 	
 }

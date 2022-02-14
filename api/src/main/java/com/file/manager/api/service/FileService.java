@@ -69,7 +69,6 @@ public class FileService {
 		Course course = wrapper.courseBuilder(request);
 		Topic topic = wrapper.topicAndLessonBuilder(request);
 		Set<Lesson> lessons = new HashSet<Lesson>();
-
 		List<String> filenames = fileStore(file);
 		Iterator<Lesson> iterator = topic.getLessons().iterator();
 		
@@ -91,7 +90,6 @@ public class FileService {
 
 		}
 		topic.setLessons(lessons);
-		course.setTopic(topic);
 		topic.setCourse(course);
 		topicRepository.save(topic);
 	}
@@ -198,5 +196,13 @@ public class FileService {
 		
 		return lessonRepository.findByResource(resource).getId();
 	}
-
+	
+	public List<Lesson> allLessons() {
+		
+		return lessonRepository.findAll();
+	}
+	public List<Course> allCourses() {
+		
+		return courseRepository.findAll();
+	}
 }
