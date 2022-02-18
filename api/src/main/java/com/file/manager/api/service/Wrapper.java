@@ -1,6 +1,9 @@
 package com.file.manager.api.service;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +17,7 @@ import com.file.manager.api.model.Course;
 import com.file.manager.api.model.Lesson;
 import com.file.manager.api.model.Topic;
 
-public class Wrapper {
+public class Wrapper extends Constants {
 
 	public Course courseBuilder(HttpServletRequest request) {
 
@@ -73,6 +76,20 @@ public class Wrapper {
 
 	private String toString(Object value) {
 		return String.valueOf(value);
+	}
+	
+	public Properties loadResource(String file)
+	{
+		Properties props = new Properties();
+		InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(file+".properties");
+		try {
+			props.load(inputStream);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return props;
 	}
 
 }

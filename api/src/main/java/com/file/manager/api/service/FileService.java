@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,6 +30,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.file.manager.api.model.Course;
 import com.file.manager.api.model.Lesson;
 import com.file.manager.api.model.Topic;
+import com.file.manager.api.model.pages.Country;
+import com.file.manager.api.model.pages.Menu;
+import com.file.manager.api.model.pages.MenuItem;
+import com.file.manager.api.model.pages.Profile;
 import com.file.manager.api.repository.CourseRepository;
 import com.file.manager.api.repository.LessonRepository;
 import com.file.manager.api.repository.TopicRepository;
@@ -36,20 +41,25 @@ import com.file.manager.api.repository.TopicRepository;
 @Service
 public class FileService {
 
+	
 	@Value("${upload.base.dir}")
 	private String baseDir;
 	private String userDir;
 	private String contentDir;
-
+	@Value("${profile.name}")
+	private String name;
+	@Value("${profile.logo}")
+	private String logo;
+	@Value("${profile.slogan}")
+	private String slogan;
+	
 	@Autowired
 	private CourseRepository courseRepository;
 	@Autowired
 	private TopicRepository topicRepository;
 	@Autowired
 	private LessonRepository lessonRepository;
-	
 
-	//@PostConstruct
 	public void init() {
 		try {
 			Files.createDirectories(Paths.get(getTargetDir()));
@@ -204,5 +214,33 @@ public class FileService {
 	public List<Course> allCourses() {
 		
 		return courseRepository.findAll();
+	}
+	public Profile profile(String language) {
+		
+		List<MenuItem>items = new ArrayList<>();
+		Wrapper wrapper = new Wrapper();
+		Properties resource = wrapper.loadResource(language);
+		
+		MenuItem login = new MenuItem();
+		login.setName(resource.getProperty(Wrapper.MENU_ITEM_NAME));
+		login.setUrl(Wrapper.MENU_ITEM_URL);
+		items.add(login);
+
+		Menu menu = new Menu();
+		menu.setItem(login);
+		menu.setMenuItems(items);
+	
+		Profile profile = new Profile();
+		profile.setName(name);
+		profile.setLogo(logo);
+		profile.setSlogan(slogan);
+		profile.setMenu(menu);
+		
+		Country country = new Country();
+		country.setActiveCountry(language);
+		profile.setCountry(country);
+		
+		return profile;
+		
 	}
 }

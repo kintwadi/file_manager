@@ -1,0 +1,11 @@
+{
+  "groups": [
+    {
+      "name": "English.menu.item",
+      "type": "com.file.manager.api.Application",
+      "sourceType": "com.file.manager.api.Application"
+    }
+  ],
+  "properties": [],
+  "hints": []
+}

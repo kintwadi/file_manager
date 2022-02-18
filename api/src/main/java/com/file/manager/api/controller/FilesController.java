@@ -1,21 +1,28 @@
 package com.file.manager.api.controller;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,15 +32,37 @@ import com.file.manager.api.model.Resource;
 import com.file.manager.api.model.UploadResponseMessage;
 import com.file.manager.api.service.FileService;
 
-@RestController
+@Controller
 public class FilesController {
 
 	private final FileService fileService;
+	@Value("${default.language}")
+	private String defaultLanguage;
 
 	@Autowired
 	public FilesController(FileService fileService) {
 		this.fileService = fileService;
 	}
+
+	@RequestMapping("/")
+	public String init(
+			Model model, 
+			HttpServletRequest request) {
+		model.addAttribute("profile", fileService.profile(defaultLanguage));
+		return "index";
+	}
+	@RequestMapping("/{language}")
+	public String home(
+			Model model, 
+			@PathVariable("language") String language,
+			HttpServletRequest request) {
+
+		System.out.println("language: "+language);
+
+		model.addAttribute("profile", fileService.profile(language));
+		return "index";
+	}
+
 	@GetMapping("file/{user_dir}/{content_dir}/{file_name}")
 	public ResponseEntity<InputStreamResource> getFile(
 			@PathVariable("user_dir") String userDir,
@@ -43,11 +72,12 @@ public class FilesController {
 
 		fileService.setUserDir(userDir);
 		fileService.setContentDir(contentDir);
-		
+
+
 		ResponseEntity<InputStreamResource> resource = fileService.getFile(fileName);
 
 		return resource;
-	
+
 	}
 
 	@GetMapping("files/{user_dir}/{content_dir}")
@@ -68,21 +98,21 @@ public class FilesController {
 	}
 
 	private Resource pathToResource(Path path) {
-		
+
 		Resource resource = new Resource();
 
 		String userDir = fileService.getUserDir();
 		String contentDir = fileService.getContentDir();
 		StringBuilder location = new StringBuilder(userDir);
-		
-		
+
+
 
 		String filename = path.getFileName().toString();
 		location.append("/");
 		location.append(contentDir);
 		location.append("/");
 		location.append(filename);
-		
+
 		resource.setFileName(filename);
 		resource.setLessonId(fileService.findLessonByResource(location.toString()));
 		resource.setUrl(MvcUriComponentsBuilder
@@ -130,5 +160,4 @@ public class FilesController {
 		fileService.setContentDir(contentDir);
 		fileService.deleteAll(fileName);
 	}
-
 }
